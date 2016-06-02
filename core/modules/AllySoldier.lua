@@ -28,7 +28,17 @@ function new()
 		allySoldier.physicBody.alpha = 0;
 
 		physics.addBody( allySoldier.physicBody, "static", { friction=0.5, bounce=0.3 } );
+		allySoldier.physicBody.isSensor = true;
 	end
+
+	-- don't stay in one place
+	local changePosition;
+	changePosition = function()
+		local newX = math.random( 0,400 );
+		local time = math.random(1500,3500);
+		allySoldier.movingTransition = transition.to(allySoldier, {time=time, x=newX, onComplete=changePosition});
+	end
+	changePosition();
 
 	print("Ally spawned");
 

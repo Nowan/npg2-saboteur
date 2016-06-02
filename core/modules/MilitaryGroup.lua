@@ -16,6 +16,7 @@ function new(size)
 	--spawn allies
 	for i=1,size do
 		militaryGroup.soldiers[i] = m_AllySoldier.new();
+		militaryGroup:insert( militaryGroup.soldiers[i] );
 	end
 
 	function militaryGroup:initPhysics(physics)
