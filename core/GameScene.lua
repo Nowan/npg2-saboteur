@@ -22,6 +22,9 @@ function scene:create( event )
     local militaryGroup = require("core.modules.MilitaryGroup").new(5);
     militaryGroup.y = content.height - ground.height - 100;
 
+    local saboteur = require("core.modules.saboteur").new();
+    saboteur.y = content.height - ground.height - 100;
+
     --init physics
     physics.start();
     --physics.setDrawMode( "hybrid" );
