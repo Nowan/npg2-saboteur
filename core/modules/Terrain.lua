@@ -6,25 +6,31 @@ local Terrain = {};
 function Terrain:generateGround(length)
 	local ground = display.newGroup( );
 
-	local currentLength = 0;
+	ground.currentLength = 0;
 
 	ground.blocks = {};
 
-	while(currentLength<length) do
+	while(ground.currentLength<length) do
 		local randValue = math.random( 1, 6 );
 		local imagePath = "core/assets/textures/grass-"..tostring(randValue)..".png";
 
-		local groundBlock = display.newImage( ground, imagePath, currentLength, 0 );
-		currentLength = currentLength + groundBlock.width;
-
-		function groundBlock:initPhysics(physics)
-			physics.addBody( groundBlock, "static", { friction=0.5, bounce=0.3 } );
-		end
+		local groundBlock = display.newImage( ground, imagePath, ground.currentLength, 0 );
+		ground.currentLength = ground.currentLength + groundBlock.width;
 
 		ground.blocks[#ground.blocks+1] = groundBlock;
 	end
 
 	return ground;
+end
+
+
+function Terrain:generateGroundBlock(ground, index)
+	local randValue = math.random( 1, 6 );
+	local imagePath = "core/assets/textures/grass-"..tostring(randValue)..".png";
+	local groundBlock = display.newImage( ground, imagePath,ground.currentLength, 0 );
+	ground.currentLength = ground.currentLength + groundBlock.width;
+	ground:insert( groundBlock); 
+	ground.blocks[index] = groundBlock;
 end
 
 return Terrain;

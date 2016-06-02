@@ -18,6 +18,7 @@ function scene:create( event )
 
     local sky = display.newRect( content.centerX, content.centerY, content.width*2, content.height );
     sky.anchorX = 0.5; sky.anchorY = 0.5;
+    sky:setFillColor( 0,0.7,0.7 )
 
     ground = m_Terrain:generateGround(content.width*2);
     ground.initialX = -200;
@@ -31,14 +32,12 @@ function scene:create( event )
     saboteur.y = content.height - ground.height - 100;
 
     --init physics
-    physics.start();
+    physics.start(true );
+    physics.setGravity( 0, 0 );
     physics.setDrawMode( "hybrid" );
 
-    for i=1,#ground.blocks do
-        ground.blocks[i]:initPhysics(physics);
-    end
-
     militaryGroup:initPhysics(physics);
+
 end
 
 
@@ -87,11 +86,24 @@ local function getDeltaTime()
     return dt
 end
 
+local groundPointer = 1;
+
 Runtime:addEventListener( "enterFrame", function() 
     --Camera:setPosition(Camera.x-Globals.movementSpeed*getDeltaTime(),0);
     local deltaTime = getDeltaTime();
     Globals.playerPosition = Globals.playerPosition + Globals.movementSpeed*deltaTime;
     ground.x = ground.initialX-Globals.playerPosition;
+
+    --print(ground.blocks[1]:localToContent( 0, 0 )<ground.initialX);
+    if(ground.blocks[groundPointer]:localToContent( 0, 0 )<ground.initialX) then
+        ground.blocks[groundPointer]:removeSelf( );
+        m_Terrain:generateGroundBlock(ground,groundPointer);
+        if(groundPointer>=#ground.blocks) then
+            groundPointer = 1;
+        else
+            groundPointer = groundPointer+1;
+        end
+    end
 end )
 
 return scene

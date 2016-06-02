@@ -1,0 +1,10 @@
+--[[
+
+	
+
+]]--
+local ObstacleGenerator = {};
+
+
+
+return ObstacleGenerator;

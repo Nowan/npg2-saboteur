@@ -26,8 +26,9 @@ function new()
 	function allySoldier:initPhysics(physics)
 		allySoldier.physicBody = display.newRect( allySoldier,10, 0, 100, 100 );
 		allySoldier.physicBody.alpha = 0;
+		allySoldier.physicBody.name = "ally";
 
-		physics.addBody( allySoldier.physicBody, "static", { friction=0.5, bounce=0.3 } );
+		physics.addBody( allySoldier.physicBody, "dynamic" );
 		allySoldier.physicBody.isSensor = true;
 	end
 

@@ -24,8 +24,9 @@ function new()
 	function Saboteur:initPhysics(physics)
 		Saboteur.physicBody = display.newRect( Saboteur,10, 0, 100, 100 );
 		Saboteur.physicBody.alpha = 0;
+		Saboteur.physicBody.name = "saboteur";
 
-		physics.addBody( Saboteur.physicBody, "static", { friction=0.5, bounce=0.3 } );
+		physics.addBody( Saboteur.physicBody, "dynamic" );
 		Saboteur.physicBody.isSensor = true;
 	end
 
