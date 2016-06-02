@@ -11,8 +11,9 @@ local Camera = require("core.modules.Camera");
 function scene:create( event )
     local sceneGroup = self.view;
 
-    local exampleObject = display.newRect( 100, 100, 100, 100 );
-    Camera:addToViewport(exampleObject);
+    --local exampleObject = display.newRect( 100, 100, 100, 100 );
+    --Camera:addToViewport(exampleObject);
+    local militaryGroup = require("core.modules.MilitaryGroup").new(5);
 end
 
 
