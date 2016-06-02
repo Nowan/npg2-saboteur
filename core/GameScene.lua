@@ -8,6 +8,7 @@ local scene = composer.newScene();
 
 local Camera = require("core.modules.Camera");
 local m_Terrain = require("core.modules.Terrain");
+local physics = require("physics");
 
 function scene:create( event )
     local sceneGroup = self.view;
@@ -19,6 +20,16 @@ function scene:create( event )
     ground.y = content.height - ground.height;
 
     local militaryGroup = require("core.modules.MilitaryGroup").new(5);
+
+    --init physics
+    physics.start();
+    physics.setDrawMode( "hybrid" );
+
+    for i=1,#ground.blocks do
+        ground.blocks[i]:initPhysics(physics);
+    end
+
+    militaryGroup:initPhysics(physics);
 end
 
 

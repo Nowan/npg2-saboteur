@@ -7,17 +7,6 @@ module(...,package.seeall);
 
 local m_AllySoldier = require("core.modules.AllySoldier");
 
-local spriteSequence = {
-	-- first sequence (consecutive frames)
-    {
-        name = "walkUp",
-        start = 2,
-        count = 8,
-        time = 800,
-        loopCount = 0
-    }
-}
-
 function new(size)
 	local militaryGroup = display.newGroup();
 
@@ -27,6 +16,12 @@ function new(size)
 	--spawn allies
 	for i=1,size do
 		militaryGroup.soldiers[i] = m_AllySoldier.new();
+	end
+
+	function militaryGroup:initPhysics(physics)
+		for i=1,militaryGroup.size do
+			militaryGroup.soldiers[i]:initPhysics(physics);
+		end
 	end
 
 	return militaryGroup;

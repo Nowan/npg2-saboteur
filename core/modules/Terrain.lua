@@ -17,6 +17,10 @@ function Terrain:generateGround(length)
 		local groundBlock = display.newImage( ground, imagePath, currentLength, 0 );
 		currentLength = currentLength + groundBlock.width;
 
+		function groundBlock:initPhysics(physics)
+			physics.addBody( groundBlock, "static", { friction=0.5, bounce=0.3 } );
+		end
+
 		ground.blocks[#ground.blocks+1] = groundBlock;
 	end
 
