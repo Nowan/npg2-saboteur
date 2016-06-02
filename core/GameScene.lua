@@ -12,6 +12,17 @@ local physics = require("physics");
 
 local ground;
 local parallax;
+local saboteur;
+
+local function touchListener(event)
+    if(event.phase=="began") then
+        saboteur:startAim(event.x,event.y);
+    elseif(event.phase=="moved") then
+        saboteur:correctAim(event.x,event.y);
+    elseif(event.phase=="ended") then
+        saboteur:stopAim();
+    end
+end
 
 function scene:create( event )
     local sceneGroup = self.view;
@@ -20,6 +31,8 @@ function scene:create( event )
     sky.anchorX = 0.5; sky.anchorY = 0.5;
     sky:setFillColor( 0,0.7,0.7 )
 
+    --parallax = require("core.modules.ParallaxBackground").new();
+
     ground = m_Terrain:generateGround(content.width*2);
     ground.initialX = -200;
     ground.y = content.height - ground.height;
@@ -27,7 +40,7 @@ function scene:create( event )
     local militaryGroup = require("core.modules.MilitaryGroup").new(5);
     militaryGroup.y = content.height - ground.height - 100;
 
-    local saboteur = require("core.modules.saboteur").new();
+    saboteur = require("core.modules.saboteur").new();
     saboteur.x = 100;
     saboteur.y = content.height - ground.height - 100;
 
@@ -38,6 +51,7 @@ function scene:create( event )
 
     militaryGroup:initPhysics(physics);
 
+    display.currentStage:addEventListener( "touch", touchListener);
 end
 
 
