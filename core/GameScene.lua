@@ -10,6 +10,9 @@ local Camera = require("core.modules.Camera");
 
 function scene:create( event )
     local sceneGroup = self.view;
+
+    local exampleObject = display.newRect( 100, 100, 100, 100 );
+    Camera:addToViewport(exampleObject);
 end
 
 
@@ -48,5 +51,9 @@ scene:addEventListener( "create", scene );
 scene:addEventListener( "show", scene );
 scene:addEventListener( "hide", scene );
 scene:addEventListener( "destroy", scene );
+
+Runtime:addEventListener( "enterFrame", function() 
+    Camera:setPosition(Camera.x+1,Camera.y);
+end )
 
 return scene

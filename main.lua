@@ -12,6 +12,8 @@ content.height = display.contentHeight;
 content.centerX = display.contentCenterX;
 content.centerY = display.contentCenterY;
 
+require("core.modules.Globals");
+
 ----------------------------------- defaults ----------------------------------------
 
 display.setDefault( "anchorX", 0 );

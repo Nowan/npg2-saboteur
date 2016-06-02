@@ -1,0 +1,4 @@
+--[[
+
+]]--
+module("Globals",package.seeall);
