@@ -1,11 +1,12 @@
 --[[
-
-
+    
 ]]--
 
 local composer = require( "composer" );
 
 local scene = composer.newScene();
+
+local Camera = require("core.modules.Camera");
 
 function scene:create( event )
     local sceneGroup = self.view;
