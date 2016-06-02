@@ -34,7 +34,7 @@ function new()
 	-- don't stay in one place
 	local changePosition;
 	changePosition = function()
-		local newX = math.random( 0,400 );
+		local newX = math.random( 0, Globals.allyMovementRange );
 		local time = math.random(1500,3500);
 		allySoldier.movingTransition = transition.to(allySoldier, {time=time, x=newX, onComplete=changePosition});
 	end
