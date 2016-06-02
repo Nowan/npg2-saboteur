@@ -10,10 +10,17 @@ local Camera = require("core.modules.Camera");
 local m_Terrain = require("core.modules.Terrain");
 local physics = require("physics");
 
+local ground;
+local parallax;
+
 function scene:create( event )
     local sceneGroup = self.view;
 
-    local ground = m_Terrain:generateGround(1000);
+    local sky = display.newRect( content.centerX, content.centerY, content.width*2, content.height );
+    sky.anchorX = 0.5; sky.anchorY = 0.5;
+
+    ground = m_Terrain:generateGround(content.width*2);
+    ground.initialX = -200;
     ground.y = content.height - ground.height;
 
     local militaryGroup = require("core.modules.MilitaryGroup").new(5);
@@ -25,15 +32,13 @@ function scene:create( event )
 
     --init physics
     physics.start();
-    --physics.setDrawMode( "hybrid" );
+    physics.setDrawMode( "hybrid" );
 
     for i=1,#ground.blocks do
         ground.blocks[i]:initPhysics(physics);
     end
 
     militaryGroup:initPhysics(physics);
-
-    Camera:addToViewport(ground);
 end
 
 
@@ -83,8 +88,10 @@ local function getDeltaTime()
 end
 
 Runtime:addEventListener( "enterFrame", function() 
-    Camera:setPosition(Camera.x-Globals.movementSpeed*getDeltaTime(),0);
-    
+    --Camera:setPosition(Camera.x-Globals.movementSpeed*getDeltaTime(),0);
+    local deltaTime = getDeltaTime();
+    Globals.playerPosition = Globals.playerPosition + Globals.movementSpeed*deltaTime;
+    ground.x = ground.initialX-Globals.playerPosition;
 end )
 
 return scene
