@@ -18,7 +18,6 @@ function new(size)
 		militaryGroup.soldiers[i] = m_AllySoldier.new();
 	end
 
-
 	return militaryGroup;
 end
 
