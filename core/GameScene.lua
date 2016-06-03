@@ -6,15 +6,15 @@ local composer = require( "composer" );
 
 local scene = composer.newScene();
 
-local Camera = require("core.modules.Camera");
 local m_Terrain = require("core.modules.Terrain");
-local physics = require("physics");
 
 local ground;
 local parallax;
 local saboteur;
 local GUI;
 local ObstacleGenerator;
+
+physics = require("physics");
 
 local function touchListener(event)
     if(event.phase=="began") then
@@ -28,16 +28,30 @@ local function touchListener(event)
 end
 
 --spawn recursively
-local spawnObstacle;
-spawnObstacle = function()
+local spawnEnemy;
+spawnEnemy = function()
     ObstacleGenerator:generateObstacle();
+
+    Globals.obstacleSpawning = Globals.levelEnd/Globals.playerPosition*200
+
+    --Globals.obstacleSpawning = 
     local nextIteration = math.random( Globals.obstacleSpawning-Globals.obstacleSpawning/3,  Globals.obstacleSpawning+ Globals.obstacleSpawning/3 )
 
     timer.performWithDelay( nextIteration, function() 
-        spawnObstacle();
+        spawnEnemy();
     end, 1 );
 end
 
+local spawnBowl;
+spawnBowl = function()
+    ObstacleGenerator:generateBowl();
+
+    local nextIteration = math.random( 1200,  3500 );
+
+    timer.performWithDelay( nextIteration, function() 
+        spawnBowl();
+    end, 1 );
+end
 
 function scene:create( event )
     local sceneGroup = self.view;
@@ -46,31 +60,35 @@ function scene:create( event )
     sky.anchorX = 0.5; sky.anchorY = 0.5;
     sky:setFillColor( 0,0.7,0.7 )
 
-    --parallax = require("core.modules.ParallaxBackground").new();
-
     ground = m_Terrain:generateGround(content.width*2);
     ground.initialX = -200;
     ground.y = content.height - ground.height;
 
-    local militaryGroup = require("core.modules.MilitaryGroup").new(5);
-
-    saboteur = require("core.modules.saboteur").new();
+    saboteur = require("core.modules.Saboteur").new();
     saboteur.x = 100;
     saboteur.y = content.height - ground.height - 100;
 
-    --init physics
-    physics.start(true );
-    physics.setGravity( 0, 0 );
-    physics.setDrawMode( "hybrid" );
-
-    militaryGroup:initPhysics(physics);
+    local militaryGroup = require("core.modules.MilitaryGroup").new(5);
 
     GUI = require("core.modules.GUI").new();
 
     ObstacleGenerator = require("core.modules.ObstacleGenerator");
 
+    --militaryGroup.y = content.height - ground.height - 100;
+
+    --init physics
+    physics.start(true);
+    physics.setGravity( 0, 0 )
+    --physics.setDrawMode( "hybrid" );
+
+    militaryGroup:initPhysics();
+
     timer.performWithDelay( 2000, function() 
-        spawnObstacle();
+        spawnEnemy();
+    end, 1 );
+
+    timer.performWithDelay( 1500, function() 
+        spawnBowl();
     end, 1 );
 
     display.currentStage:addEventListener( "touch", touchListener);
@@ -131,7 +149,7 @@ Runtime:addEventListener( "enterFrame", function()
 
     --Camera:setPosition(Globals.playerPosition,0);
 
-    ObstacleGenerator:moveObstacles(-Globals.playerPosition,0);
+    --ObstacleGenerator:moveObstacles(-Globals.playerPosition,0);
 
     GUI:updateProgress(  );
 

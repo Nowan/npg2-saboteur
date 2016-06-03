@@ -8,7 +8,7 @@ module(...,package.seeall);
 local m_AllySoldier = require("core.modules.AllySoldier");
 
 function new(size)
-	local militaryGroup = display.newGroup();
+	local militaryGroup = {};
 
 	militaryGroup.size = size;
 	militaryGroup.soldiers = {};
@@ -16,12 +16,12 @@ function new(size)
 	--spawn allies
 	for i=1,size do
 		militaryGroup.soldiers[i] = m_AllySoldier.new();
-		militaryGroup:insert( militaryGroup.soldiers[i] );
 	end
 
-	function militaryGroup:initPhysics(physics)
-		for i=1,militaryGroup.size do
-			militaryGroup.soldiers[i]:initPhysics(physics);
+	function militaryGroup:initPhysics()
+		print(#militaryGroup.soldiers);
+		for i=1,#militaryGroup.soldiers do
+			militaryGroup.soldiers[i]:initPhysics();
 		end
 	end
 

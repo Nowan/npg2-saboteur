@@ -7,8 +7,6 @@ function new(owner,gunpointX,gunpointY,targetX,targetY)
 	local bullet = display.newImage( "core/assets/textures/bullet.png" );
 
 	bullet.owner = owner;
-	--bullet.width = 200;
-	--bullet.height = 20;
 	bullet.anchorX = 0.5;
 	bullet.anchorY = 0.5;
 
@@ -36,11 +34,19 @@ function new(owner,gunpointX,gunpointY,targetX,targetY)
 
 	bullet:addEventListener( "collision", function(event) 
 		if(event.phase=="began") then
-			print("bullet collision with "..event.other.name);
+			--print(bullet.owner.." bullet collision with "..event.other.name);
 			if(bullet.owner=="saboteur" and event.other.name=="enemy") then
 				bullet:removeSelf( );
 				bullet = nil;
-				--event.other:takeDamage(Globals.saboteurDamage);
+				event.other:takeDamage(Globals.saboteurDamage);
+			elseif(bullet.owner=="enemy" and (event.other.name=="ally" or event.other.name=="saboteur")) then
+				bullet:removeSelf( );
+				bullet = nil;
+				event.other:takeDamage(25);
+			elseif(bullet.owner=="saboteur" and event.other.name=="bowl") then
+				bullet:removeSelf( );
+				bullet = nil;
+				event.other:explode();
 			end
 		end
 	end );

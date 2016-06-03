@@ -27,13 +27,8 @@ function new()
 	Saboteur.gunpoint.x = Saboteur.x+170;
 	Saboteur.gunpoint.y = Saboteur.y+50;
 
-	function Saboteur:initPhysics(physics)
-		Saboteur.physicBody = display.newRect( Saboteur,10, 0, 100, 100 );
-		Saboteur.physicBody.alpha = 0;
-		Saboteur.physicBody.name = "saboteur";
-
-		physics.addBody( Saboteur.physicBody, "dynamic" );
-		Saboteur.physicBody.isSensor = true;
+	function Saboteur:initPhysics()
+		
 	end
 
 	local aim = {};
