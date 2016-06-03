@@ -21,6 +21,7 @@ local function touchListener(event)
         saboteur:correctAim(event.x,event.y);
     elseif(event.phase=="ended") then
         saboteur:stopAim();
+        saboteur:shoot(event.x,event.y);
     end
 end
 
@@ -47,7 +48,7 @@ function scene:create( event )
     --init physics
     physics.start(true );
     physics.setGravity( 0, 0 );
-    physics.setDrawMode( "hybrid" );
+    --physics.setDrawMode( "hybrid" );
 
     militaryGroup:initPhysics(physics);
 

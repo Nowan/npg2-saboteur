@@ -3,6 +3,8 @@
 ]]--
 module(...,package.seeall);
 
+local m_Bullet = require("core.modules.Bullet");
+
 local sheetData1 = { width=86, height=56, numFrames=6 };
 local sheet1 = graphics.newImageSheet( "core/assets/sprites/ally-running.png", sheetData1 );
 
@@ -20,6 +22,10 @@ function new()
 	sprite:setFillColor( 0.4,0.4,0.4 );
 	sprite:play();
 	Saboteur.sprite = sprite;
+
+	Saboteur.gunpoint = {};
+	Saboteur.gunpoint.x = Saboteur.x+170;
+	Saboteur.gunpoint.y = Saboteur.y+50;
 
 	function Saboteur:initPhysics(physics)
 		Saboteur.physicBody = display.newRect( Saboteur,10, 0, 100, 100 );
@@ -56,6 +62,10 @@ function new()
 	function Saboteur:stopAim()
 		aim.line:removeSelf( );
 		aim.pointer:removeSelf();
+	end
+
+	function Saboteur:shoot(x,y)
+		m_Bullet.new("saboteur",Saboteur.x+170,Saboteur.y+50,x,y);
 	end
 
 	return Saboteur;
