@@ -95,6 +95,7 @@ function new(GUI)
 		local missleRange = 40;
 		local missle = math.random( -missleRange, 20 );
 		m_Bullet.new("enemy",gunX-170, gunY+60, gunX-300, 650+missle);
+
 	end, -1 );
 
 	return enemySoldier;

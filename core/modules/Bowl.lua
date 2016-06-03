@@ -6,6 +6,8 @@ module(..., package.seeall);
 -- Require the JSON library for decoding purposes
 	local json = require( "json" )
 
+local explosionSound = audio.loadSound( "core/sounds/explosion.wav")
+
 function new()
 	local bowl = display.newImage( "core/assets/textures/barrel.png")
 
@@ -39,7 +41,7 @@ function new()
 			physics.addBody( bowl.explosionCollider, "dynamic", {radius=200} );
 			bowl.explosionCollider.isSensor = true;
 			bowl.explosionCollider.name = "explosion";
-			
+
 			emitter.x = bowl.x
 			emitter.y = bowl.y
 
@@ -56,6 +58,8 @@ function new()
 		timer.performWithDelay( 200, function() 
 			emitter:stop( );
 		end ,1 )
+
+		audio.play( explosionSound );
 
 	end
 

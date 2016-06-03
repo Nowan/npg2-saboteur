@@ -21,6 +21,13 @@ local enemySpawnTimer;
 physics = require("physics");
 
 local runtime = 0
+
+-- Load two audio streams and one sound
+local backgroundMusic = audio.loadStream( "core/sounds/charles_giteau_by_kelly_harrell.mp3" )
+--local narrationSpeech = audio.loadStream( "narrationSpeech.wav" )
+
+-- Play the background music on channel 1, loop infinitely, and fade in over 5 seconds 
+local backgroundMusicChannel = audio.play( backgroundMusic, { channel=1, loops=-1, fadein=5000 } );
  
 local function getDeltaTime()
     local temp = system.getTimer()  -- Get current game time in ms
@@ -92,8 +99,10 @@ function finishGame(title,message)
         end
         ObstacleGenerator=nil;
 
-        GUI:removeSelf( );
-        GUI=nil;
+        if(GUI) then
+            GUI:removeSelf( );
+            GUI=nil;
+        end
 
         parallax:removeProperly( );
     end, 1 )

@@ -46,8 +46,14 @@ function new()
 	end
 
 	function parallax:removeProperly()
-		background:removeSelf( );
-		foreground:removeSelf( );
+		if(background) then
+			background:removeSelf( );
+			background = nil;
+		end
+		if(foreground) then
+			foreground:removeSelf( );
+			foreground = nil;
+		end
 	end
 
 	return parallax;

@@ -8,6 +8,11 @@ local m_Bullet = require("core.modules.Bullet");
 local sheetData1 = { width=86, height=56, numFrames=6 };
 local sheet1 = graphics.newImageSheet( "core/assets/sprites/ally-running.png", sheetData1 );
 
+local shotSound = audio.loadSound( "core/sounds/shot1.wav")
+local tickingSound = audio.loadSound( "core/sounds/ticking.mp3")
+
+local tickingStream
+
 local sequenceData = {
 	{ name="running", sheet=sheet1, start=1, count=4, time=450, loopCount=0 }
 }
@@ -75,6 +80,8 @@ function new()
 		aim.pointer.width = 200; aim.pointer.height = 200;
 		aim.pointer.anchorX = 0.5; aim.pointer.anchorY = 0.5;
 		aim.pointer.x = x; aim.pointer.y = y;
+
+		tickingStream = audio.play(tickingSound);
 	end
 
 	function Saboteur:correctAim(x,y)
@@ -90,10 +97,12 @@ function new()
 	function Saboteur:stopAim()
 		aim.line:removeSelf( );
 		aim.pointer:removeSelf();
+		audio.pause(tickingStream);
 	end
 
 	function Saboteur:shoot(x,y)
 		m_Bullet.new("saboteur",Saboteur.x+170,Saboteur.y+50,x,y);
+		audio.play(shotSound);
 	end
 
 	return Saboteur;

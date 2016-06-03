@@ -5,6 +5,8 @@
 ]]--
 module(..., package.seeall);
 
+local painSound1 = audio.loadSound( "core/sounds/pain1.wav");
+local painSound2 = audio.loadSound( "core/sounds/pain2.wav");
 
 local sheetData1 = { width=86, height=56, numFrames=6 };
 local sheet1 = graphics.newImageSheet( "core/assets/sprites/ally-running.png", sheetData1 );
@@ -84,6 +86,12 @@ function new(GUI)
 			end
 			GUI:updateLoyalty();
 		else
+			local audioChoose = math.random( 1,2 );
+			if(audioChoose==1) then
+				audio.play(painSound1)
+			else
+				audio.play(painSound2)
+			end
 			allySoldier.healthBar.width = allySoldier.currentHealth;
 		end
 	end
