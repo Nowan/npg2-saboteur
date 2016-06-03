@@ -25,5 +25,35 @@ function new()
 		distancePanel.progressContainer.width = Globals.playerPosition*(distancePanel.progress.width/Globals.levelEnd);
 	end
 
+	local messageGroup;
+
+	function GUI:showMessage(title,message)
+		messageGroup = display.newGroup(  );
+		local messageBG = display.newRect( messageGroup, content.centerX, content.centerY, content.width*2, content.height )
+		messageBG.anchorX=0.5; messageBG.anchorY=0.5;
+		messageBG:setFillColor( 0,0,0 );
+		local messageWindow = display.newRect( messageGroup, content.centerX, content.centerY, 800, 500 );
+		messageWindow.anchorX=0.5; messageWindow.anchorY=0.5;
+
+		local title = display.newText( messageGroup, title, content.centerX, 170,"Arial", 40 );
+		title.anchorX=0.5;
+		title:setFillColor( 0,0,0 )
+
+		local message = display.newText( messageGroup, message, content.centerX, 270, 700, 300, "Arial" );
+		message.anchorX=0.5;
+		message:setFillColor( 0,0,0 )
+
+		local buttonBG = display.newRect( messageGroup, content.centerX, 500, 500, 100 );
+		buttonBG.anchorX = 0.5;
+		buttonBG:setFillColor( 0,0,0 );
+		buttonBG:addEventListener( "tap", function() 
+			startGame();
+			messageGroup:removeSelf( );
+		end );
+
+		local buttonTxt = display.newText( messageGroup, "RESTART", content.centerX, 530,"Arial" );
+		buttonTxt.anchorX = 0.5;
+	end
+
 	return GUI;
 end

@@ -13,8 +13,44 @@ local parallax;
 local saboteur;
 local GUI;
 local ObstacleGenerator;
+local militaryGroup;
+
+local bowlSpawnTimer;
+local enemySpawnTimer;
 
 physics = require("physics");
+
+local runtime = 0
+ 
+local function getDeltaTime()
+    local temp = system.getTimer()  -- Get current game time in ms
+    local dt = (temp-runtime) / (1000/60)  -- 60 fps or 30 fps as base
+    runtime = temp  -- Store game time
+    return dt
+end
+
+local groundPointer = 1;
+
+local function frameListener()
+    if(Globals.playerPosition>=Globals.levelEnd) then
+        finishGame("YOU LOST", "As a saboteur. you must have prevented your allies on getting to the base");
+    end
+    local deltaTime = getDeltaTime();
+    Globals.playerPosition = Globals.playerPosition + Globals.movementSpeed*deltaTime;
+    ground.x = ground.initialX-Globals.playerPosition;
+
+    GUI:updateProgress(  );
+
+    if(ground.blocks[groundPointer]:localToContent( 0, 0 )<ground.initialX) then
+        ground.blocks[groundPointer]:removeSelf( );
+        m_Terrain:generateGroundBlock(ground,groundPointer);
+        if(groundPointer>=#ground.blocks) then
+            groundPointer = 1;
+        else
+            groundPointer = groundPointer+1;
+        end
+    end
+end
 
 local function touchListener(event)
     if(event.phase=="began") then
@@ -27,9 +63,32 @@ local function touchListener(event)
     end
 end
 
+function finishGame(title,message)
+    timer.performWithDelay( 1, function() 
+        physics.pause( );
+        if(militaryGroup and militaryGroup.spawningTimer) then timer.cancel( militaryGroup.spawningTimer ) end;
+        militaryGroup = nil;
+
+        GUI:showMessage(title,message);
+
+        display.currentStage:removeEventListener( "touch", touchListener);
+        Runtime:removeEventListener( "enterFrame", frameListener );
+
+        if(enemySpawnTimer) then timer.cancel( enemySpawnTimer ) end;
+        if(bowlSpawnTimer) then timer.cancel( bowlSpawnTimer ) end;
+
+        --cleaning resources
+        ground=nil;
+        saboteur:removeSelf( );
+        saboteur=nil;
+        ObstacleGenerator=nil;
+    end, 1 )
+end
+
 --spawn recursively
 local spawnEnemy;
 spawnEnemy = function()
+    if( not ObstacleGenerator) then return end;
     ObstacleGenerator:generateObstacle();
 
     Globals.obstacleSpawning = Globals.levelEnd/Globals.playerPosition*200
@@ -37,28 +96,26 @@ spawnEnemy = function()
     --Globals.obstacleSpawning = 
     local nextIteration = math.random( Globals.obstacleSpawning-Globals.obstacleSpawning/3,  Globals.obstacleSpawning+ Globals.obstacleSpawning/3 )
 
-    timer.performWithDelay( nextIteration, function() 
+    enemySpawnTimer = timer.performWithDelay( nextIteration, function() 
         spawnEnemy();
     end, 1 );
 end
 
 local spawnBowl;
 spawnBowl = function()
+    if( not ObstacleGenerator) then return end;
     ObstacleGenerator:generateBowl();
 
     local nextIteration = math.random( 1200,  3500 );
 
-    timer.performWithDelay( nextIteration, function() 
+    bowlSpawnTimer = timer.performWithDelay( nextIteration, function() 
         spawnBowl();
     end, 1 );
 end
 
-function scene:create( event )
-    local sceneGroup = self.view;
 
-    local sky = display.newRect( content.centerX, content.centerY, content.width*2, content.height );
-    sky.anchorX = 0.5; sky.anchorY = 0.5;
-    sky:setFillColor( 0,0.7,0.7 )
+function startGame(title,message)
+    Globals.playerPosition = 0;
 
     ground = m_Terrain:generateGround(content.width*2);
     ground.initialX = -200;
@@ -68,9 +125,7 @@ function scene:create( event )
     saboteur.x = 100;
     saboteur.y = content.height - ground.height - 100;
 
-    local militaryGroup = require("core.modules.MilitaryGroup").new(5);
-
-    GUI = require("core.modules.GUI").new();
+    militaryGroup = require("core.modules.MilitaryGroup").new(5);
 
     ObstacleGenerator = require("core.modules.ObstacleGenerator");
 
@@ -84,14 +139,29 @@ function scene:create( event )
     militaryGroup:initPhysics();
 
     timer.performWithDelay( 2000, function() 
-        spawnEnemy();
+        enemySpawnTimer= spawnEnemy();
     end, 1 );
 
     timer.performWithDelay( 1500, function() 
-        spawnBowl();
+        bowlSpawnTimer = spawnBowl();
     end, 1 );
 
+    GUI = require("core.modules.GUI").new();
+
     display.currentStage:addEventListener( "touch", touchListener);
+
+    Runtime:addEventListener( "enterFrame", frameListener );
+    --finishGame("title","message asdf asd fasd fa sdfas dhfaskd hfaklsdh flkasdh flaskhdf poiuaehrpqwhe fsad hfpuaoisdhf skadlf h");
+end
+
+function scene:create( event )
+    local sceneGroup = self.view;
+
+    local sky = display.newRect( content.centerX, content.centerY, content.width*2, content.height );
+    sky.anchorX = 0.5; sky.anchorY = 0.5;
+    sky:setFillColor( 0,0.7,0.7 )
+
+    startGame();
 end
 
 
@@ -118,8 +188,6 @@ function scene:hide( event )
     end
 end
 
-
-
 function scene:destroy( event )
     local sceneGroup = self.view;
 
@@ -130,38 +198,5 @@ scene:addEventListener( "create", scene );
 scene:addEventListener( "show", scene );
 scene:addEventListener( "hide", scene );
 scene:addEventListener( "destroy", scene );
-
-local runtime = 0
- 
-local function getDeltaTime()
-    local temp = system.getTimer()  -- Get current game time in ms
-    local dt = (temp-runtime) / (1000/60)  -- 60 fps or 30 fps as base
-    runtime = temp  -- Store game time
-    return dt
-end
-
-local groundPointer = 1;
-
-Runtime:addEventListener( "enterFrame", function() 
-    local deltaTime = getDeltaTime();
-    Globals.playerPosition = Globals.playerPosition + Globals.movementSpeed*deltaTime;
-    ground.x = ground.initialX-Globals.playerPosition;
-
-    --Camera:setPosition(Globals.playerPosition,0);
-
-    --ObstacleGenerator:moveObstacles(-Globals.playerPosition,0);
-
-    GUI:updateProgress(  );
-
-    if(ground.blocks[groundPointer]:localToContent( 0, 0 )<ground.initialX) then
-        ground.blocks[groundPointer]:removeSelf( );
-        m_Terrain:generateGroundBlock(ground,groundPointer);
-        if(groundPointer>=#ground.blocks) then
-            groundPointer = 1;
-        else
-            groundPointer = groundPointer+1;
-        end
-    end
-end )
 
 return scene

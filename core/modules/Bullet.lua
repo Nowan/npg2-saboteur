@@ -30,6 +30,8 @@ function new(owner,gunpointX,gunpointY,targetX,targetY)
 	local velX = dX*(bulletVelocity/hypoten);
 	local velY = dY*(bulletVelocity/hypoten);
 
+	if(not bullet) then return end
+
 	bullet:setLinearVelocity( velX, velY );
 
 	bullet:addEventListener( "collision", function(event) 

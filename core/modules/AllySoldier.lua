@@ -67,10 +67,16 @@ function new()
 			print("DIE")
 			allySoldier:removeSelf( );
 			allySoldier = nil;
+			Globals.groupSize = Globals.groupSize - 1;
+			if(Globals.groupSize<=0) then
+				finishGame("LEVEL FAILED - YOU WON", "You have successfully przevented your group from getting to the basement");
+			end
 		else
 			allySoldier.healthBar.width = allySoldier.currentHealth;
 		end
 	end
+
+
 
 	return allySoldier;
 end

@@ -16,3 +16,4 @@ Globals.obstacleSpawning = 10000; -- time period of obstacle being spawned
 
 Globals.saboteurDamage = 33.5;
 
+Globals.groupSize = 5;
