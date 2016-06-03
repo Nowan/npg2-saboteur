@@ -27,8 +27,41 @@ function new()
 	Saboteur.gunpoint.x = Saboteur.x+170;
 	Saboteur.gunpoint.y = Saboteur.y+50;
 
+	Saboteur.maxHealth = 200;
+	Saboteur.currentHealth = Saboteur.maxHealth;
+
+	Saboteur.healthBarBG = display.newRect( -50, -40, Saboteur.maxHealth, 15 );
+	Saboteur.healthBarBG:setFillColor( 0.3,0.3,0.3 );
+	Saboteur.healthBar = display.newRect( -50, -40, Saboteur.currentHealth, 15 );
+	Saboteur.healthBar:setFillColor( 0.3,0.7,0.3 );
+
+	Saboteur:insert( Saboteur.healthBarBG )
+	Saboteur:insert( Saboteur.healthBar);
+
 	function Saboteur:initPhysics()
-		
+		local offsetRectParams = { halfWidth=30, halfHeight=50, x=50, y=50 }
+		physics.addBody( Saboteur, "dynamic", {box=offsetRectParams} );
+		Saboteur.name = "saboteur";
+		Saboteur.isSensor = true;
+
+		Saboteur:addEventListener( "collision", function(event) 
+			if(event.phase=="began") then
+				if(event.other.name=="explosion") then
+					Saboteur:takeDamage(75);
+				end
+			end
+		end )
+	end
+
+	function Saboteur:takeDamage(damage)
+		print("Damage taken "..damage)
+		Saboteur.currentHealth = Saboteur.currentHealth - damage;
+
+		if(Saboteur.currentHealth<=0) then
+			finishGame("FAILURE", "You have died before completing the sabotauge");
+		else
+			Saboteur.healthBar.width = Saboteur.currentHealth;
+		end
 	end
 
 	local aim = {};

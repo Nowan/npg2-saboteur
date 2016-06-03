@@ -21,8 +21,29 @@ function new()
 	distancePanel.anchorX = 0.5;
 	distancePanel.x = content.centerX;
 
-	function GUI:updateProgress(progress)
+	local loyaltyIcon = display.newImage( GUI, "core/assets/textures/loyalty.png" );
+	loyaltyIcon.width =150; loyaltyIcon.height = 75;
+	loyaltyIcon.x = content.width - loyaltyIcon.width;
+	loyaltyIcon.y = content.height - loyaltyIcon.height-30
+
+	local loyaltyText = display.newText( GUI, Globals.currentLoyalty.."/"..Globals.maxLoyalty, 0, 0, "Arial" );
+	loyaltyText.x = loyaltyIcon.x+loyaltyIcon.width/2 - loyaltyText.width/2;
+	loyaltyText.y = loyaltyIcon.y - 40;
+	loyaltyText:setFillColor( 0.2, 1,1 );
+
+	function GUI:updateProgress()
 		distancePanel.progressContainer.width = Globals.playerPosition*(distancePanel.progress.width/Globals.levelEnd);
+	end
+
+	function GUI:updateLoyalty()
+		loyaltyText.text = Globals.currentLoyalty.."/"..Globals.maxLoyalty;
+		if(Globals.currentLoyalty>70) then
+			loyaltyText:setFillColor( 0.2, 1,1 );
+		elseif(Globals.currentLoyalty>30) then
+			loyaltyText:setFillColor( 1, 1,0.2 );
+		else
+			loyaltyText:setFillColor( 1, 0.2,0.2 );
+		end
 	end
 
 	local messageGroup;
@@ -47,8 +68,9 @@ function new()
 		buttonBG.anchorX = 0.5;
 		buttonBG:setFillColor( 0,0,0 );
 		buttonBG:addEventListener( "tap", function() 
-			startGame();
 			messageGroup:removeSelf( );
+			messageGroup=nil;
+			startGame();
 		end );
 
 		local buttonTxt = display.newText( messageGroup, "RESTART", content.centerX, 530,"Arial" );

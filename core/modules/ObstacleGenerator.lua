@@ -11,16 +11,20 @@ ObstacleGenerator.obstacles = display.newGroup();
 
 ObstacleGenerator.freeSlots = 1;
 
-function ObstacleGenerator:generateObstacle()
+function ObstacleGenerator:new()
+	ObstacleGenerator.obstacles = display.newGroup();
+end
+
+function ObstacleGenerator:generateObstacle(GUI)
 	local obstacle = display.newGroup( );
 
-	local enemySoldier = m_EnemySoldier.new();
+	local enemySoldier = m_EnemySoldier.new(GUI);
 	--enemySoldier.y = content.height-190;
 	enemySoldier.x = Globals.playerPosition+content.width*1.5;
 	enemySoldier.y = content.height-190;
 	enemySoldier:initPhysics(physics);
 
-	--ObstacleGenerator.obstacles:insert( enemySoldier );
+	ObstacleGenerator.obstacles:insert( enemySoldier );
 	ObstacleGenerator.obstacles[#ObstacleGenerator.obstacles+1] = obstacle;
 
 	return obstacle;

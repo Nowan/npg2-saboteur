@@ -39,6 +39,8 @@ local function frameListener()
     Globals.playerPosition = Globals.playerPosition + Globals.movementSpeed*deltaTime;
     ground.x = ground.initialX-Globals.playerPosition;
 
+    parallax:moveBG(-Globals.playerPosition);
+
     GUI:updateProgress(  );
 
     if(ground.blocks[groundPointer]:localToContent( 0, 0 )<ground.initialX) then
@@ -64,24 +66,36 @@ local function touchListener(event)
 end
 
 function finishGame(title,message)
+    Globals.gameFinished = true;
     timer.performWithDelay( 1, function() 
         physics.pause( );
         if(militaryGroup and militaryGroup.spawningTimer) then timer.cancel( militaryGroup.spawningTimer ) end;
-        militaryGroup = nil;
+        militaryGroup:removeProperly();
 
-        GUI:showMessage(title,message);
+        if(GUI) then
+            GUI:showMessage(title,message);
+        end
 
         display.currentStage:removeEventListener( "touch", touchListener);
         Runtime:removeEventListener( "enterFrame", frameListener );
 
-        if(enemySpawnTimer) then timer.cancel( enemySpawnTimer ) end;
-        if(bowlSpawnTimer) then timer.cancel( bowlSpawnTimer ) end;
+        if(enemySpawnTimer) then timer.cancel( enemySpawnTimer ); enemySpawnTimer=nil end;
+        if(bowlSpawnTimer) then timer.cancel( bowlSpawnTimer ); bowlSpawnTimer=nil end;
 
         --cleaning resources
         ground=nil;
-        saboteur:removeSelf( );
+        --saboteur:removeSelf( );
         saboteur=nil;
+        if(ObstacleGenerator and ObstacleGenerator.obstacles) then
+            ObstacleGenerator.obstacles:removeSelf( );
+            ObstacleGenerator.obstacles = nil
+        end
         ObstacleGenerator=nil;
+
+        GUI:removeSelf( );
+        GUI=nil;
+
+        parallax:removeProperly( );
     end, 1 )
 end
 
@@ -89,7 +103,7 @@ end
 local spawnEnemy;
 spawnEnemy = function()
     if( not ObstacleGenerator) then return end;
-    ObstacleGenerator:generateObstacle();
+    ObstacleGenerator:generateObstacle(GUI);
 
     Globals.obstacleSpawning = Globals.levelEnd/Globals.playerPosition*200
 
@@ -115,7 +129,10 @@ end
 
 
 function startGame(title,message)
+    Globals.gameFinished = false;
     Globals.playerPosition = 0;
+
+    parallax = require("core.modules.ParallaxBackground").new();
 
     ground = m_Terrain:generateGround(content.width*2);
     ground.initialX = -200;
@@ -125,9 +142,10 @@ function startGame(title,message)
     saboteur.x = 100;
     saboteur.y = content.height - ground.height - 100;
 
-    militaryGroup = require("core.modules.MilitaryGroup").new(5);
+    militaryGroup = require("core.modules.MilitaryGroup").new(5,GUI);
 
     ObstacleGenerator = require("core.modules.ObstacleGenerator");
+    ObstacleGenerator:new();
 
     --militaryGroup.y = content.height - ground.height - 100;
 
@@ -137,6 +155,7 @@ function startGame(title,message)
     --physics.setDrawMode( "hybrid" );
 
     militaryGroup:initPhysics();
+    saboteur:initPhysics();
 
     timer.performWithDelay( 2000, function() 
         enemySpawnTimer= spawnEnemy();

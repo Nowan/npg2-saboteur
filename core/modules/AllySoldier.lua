@@ -13,7 +13,7 @@ local sequenceData = {
 	{ name="running", sheet=sheet1, start=1, count=4, time=450, loopCount=0 }
 }
 
-function new()
+function new(GUI)
 	local allySoldier = display.newGroup( );
 	allySoldier.sprite = display.newSprite( sheet1, sequenceData );
 	allySoldier.sprite.xScale = 2;
@@ -42,7 +42,7 @@ function new()
 		allySoldier:addEventListener( "collision", function(event) 
 			if(event.phase=="began") then
 				if(event.other.name=="explosion") then
-					allySoldier:takeDamage(100);
+					allySoldier:takeDamage(60);
 				end
 			end
 		end )
@@ -60,17 +60,29 @@ function new()
 
 	allySoldier.y = content.height - 150;
 
-	function allySoldier:takeDamage(damage)
+	function allySoldier:takeDamage(damage,source)
 		allySoldier.currentHealth = allySoldier.currentHealth - damage;
 
 		if(allySoldier.currentHealth<=0) then
 			print("DIE")
 			allySoldier:removeSelf( );
 			allySoldier = nil;
+			
+			if(Globals.gameFinished) then return end
 			Globals.groupSize = Globals.groupSize - 1;
+
 			if(Globals.groupSize<=0) then
 				finishGame("LEVEL FAILED - YOU WON", "You have successfully przevented your group from getting to the basement");
+				return
 			end
+
+			if(source=="enemy")then return end
+			Globals.currentLoyalty = Globals.currentLoyalty - 20;
+			if(Globals.currentLoyalty>=0) then
+				finishGame("FAILURE", "You saboteur actions were too obvious, therefore you have been captured");
+				return
+			end
+			GUI:updateLoyalty();
 		else
 			allySoldier.healthBar.width = allySoldier.currentHealth;
 		end

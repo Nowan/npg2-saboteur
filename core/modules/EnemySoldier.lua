@@ -21,7 +21,7 @@ local sequenceData = {
 	{ name="reloading", sheet=sheet4, start=2, count=7, time=1050, loopCount=0 }
 }
 
-function new()
+function new(GUI)
 	local enemySoldier = display.newGroup( );
 	enemySoldier.sprite = display.newSprite( sheet1, sequenceData );
 	enemySoldier.sprite.xScale = -2.5;
@@ -77,6 +77,8 @@ function new()
 			print("DIE")
 			enemySoldier:removeSelf( );
 			enemySoldier = nil;
+			Globals.currentLoyalty = math.min(Globals.currentLoyalty + 5,Globals.maxLoyalty);
+			GUI:updateLoyalty();
 		else
 			enemySoldier.healthBar.width = enemySoldier.currentHealth;
 		end
@@ -84,16 +86,16 @@ function new()
 
 	--fire in loop
 	enemySoldier.infiniteFiring = timer.performWithDelay( 1000, function() 
-		if(not enemySoldier) then return end;
-		local gunX, gunY = enemySoldier:localToContent( 0, 0 );
+		if(enemySoldier==nil) then return end;
+
+		local gunX = enemySoldier.x; local gunY = enemySoldier.y
+
+		if(gunX==nil or gunY==nil) then return end;
 
 		local missleRange = 40;
 		local missle = math.random( -missleRange, 20 );
 		m_Bullet.new("enemy",gunX-170, gunY+60, gunX-300, 650+missle);
-		
 	end, -1 );
-
-	
 
 	return enemySoldier;
 end

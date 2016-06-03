@@ -39,7 +39,7 @@ function new()
 			physics.addBody( bowl.explosionCollider, "dynamic", {radius=200} );
 			bowl.explosionCollider.isSensor = true;
 			bowl.explosionCollider.name = "explosion";
-
+			
 			emitter.x = bowl.x
 			emitter.y = bowl.y
 

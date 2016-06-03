@@ -10,10 +10,13 @@ Globals.playerPosition = 0;
 
 Globals.levelEnd = 15000; -- end of the level
 
-Globals.loyaltyLevel = 100;
+Globals.maxLoyalty = 100;
+Globals.currentLoyalty = 100;
 
 Globals.obstacleSpawning = 10000; -- time period of obstacle being spawned
 
 Globals.saboteurDamage = 33.5;
 
 Globals.groupSize = 5;
+
+Globals.gameFinished = false;

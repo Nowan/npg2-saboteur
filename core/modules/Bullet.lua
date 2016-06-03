@@ -44,7 +44,7 @@ function new(owner,gunpointX,gunpointY,targetX,targetY)
 			elseif(bullet.owner=="enemy" and (event.other.name=="ally" or event.other.name=="saboteur")) then
 				bullet:removeSelf( );
 				bullet = nil;
-				event.other:takeDamage(25);
+				event.other:takeDamage(25,"enemy");
 			elseif(bullet.owner=="saboteur" and event.other.name=="bowl") then
 				bullet:removeSelf( );
 				bullet = nil;
