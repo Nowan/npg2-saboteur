@@ -53,7 +53,6 @@ function scene:create( event )
     ground.y = content.height - ground.height;
 
     local militaryGroup = require("core.modules.MilitaryGroup").new(5);
-    militaryGroup.y = content.height - ground.height - 100;
 
     saboteur = require("core.modules.saboteur").new();
     saboteur.x = 100;
@@ -69,10 +68,9 @@ function scene:create( event )
     GUI = require("core.modules.GUI").new();
 
     ObstacleGenerator = require("core.modules.ObstacleGenerator");
-    --Camera:addToViewport(ObstacleGenerator:generateObstacle())
 
     timer.performWithDelay( 2000, function() 
-        spawnObstacle();        
+        spawnObstacle();
     end, 1 );
 
     display.currentStage:addEventListener( "touch", touchListener);
@@ -137,7 +135,6 @@ Runtime:addEventListener( "enterFrame", function()
 
     GUI:updateProgress(  );
 
-    --print(ground.blocks[1]:localToContent( 0, 0 )<ground.initialX);
     if(ground.blocks[groundPointer]:localToContent( 0, 0 )<ground.initialX) then
         ground.blocks[groundPointer]:removeSelf( );
         m_Terrain:generateGroundBlock(ground,groundPointer);

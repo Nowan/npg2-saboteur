@@ -3,6 +3,7 @@
 ]]--
 module(..., package.seeall);
 
+local m_Bullet = require("core.modules.Bullet");
 
 local sheetData1 = { width=50, height=62, numFrames=5 };
 local sheet1 = graphics.newImageSheet( "core/assets/sprites/enemy-sitting.png", sheetData1 );
@@ -23,6 +24,9 @@ local sequenceData = {
 function new()
 	local enemySoldier = display.newGroup();
 
+	enemySoldier.maxHealth = 100;
+	enemySoldier.currentHealth = enemySoldier.maxHealth;
+
 	local sprite = display.newSprite( enemySoldier, sheet1, sequenceData );
 	sprite.xScale = -2.5;
 	sprite.yScale = 2.5;
@@ -41,6 +45,38 @@ function new()
 	end );
 
 	enemySoldier.sprite = sprite;
+
+	function enemySoldier:initPhysics(physics)
+		enemySoldier.physicBody = display.newRect( enemySoldier,-60, 40, 50, 100 );
+		enemySoldier.physicBody.alpha = 0;
+		enemySoldier.physicBody.name = "enemy";
+
+		physics.addBody( enemySoldier.physicBody, "dynamic" );
+		enemySoldier.physicBody.isSensor = true;
+	end
+
+	function enemySoldier:takeDamage(damage)
+		enemySoldier.currentHealth = enemySoldier.currentHealth - damage;
+
+		if(enemySoldier.currentHealth<=0) then
+			print("DIE")
+		else
+
+		end
+	end
+
+	--fire in loop
+	local infiniteFiring = timer.performWithDelay( 1000, function() 
+
+		local gunX, gunY = enemySoldier:localToContent( 0, 60 );
+
+		local missleRange = 50;
+		local missle = math.random( -missleRange, 20 );
+		m_Bullet.new("enemy",gunX-60, gunY, gunX-200, 650+missle);
+		
+	end, -1 );
+
 	
+
 	return enemySoldier;
 end

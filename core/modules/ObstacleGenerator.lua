@@ -15,6 +15,7 @@ function ObstacleGenerator:generateObstacle()
 
 	local enemySoldier = m_EnemySoldier.new();
 	enemySoldier.y = content.height-190;
+	enemySoldier:initPhysics(physics);
 	
 	obstacle:insert( enemySoldier );
 	obstacle.x = Globals.playerPosition+content.width*1.5;
@@ -24,6 +25,8 @@ function ObstacleGenerator:generateObstacle()
 
 	return obstacle;
 end
+
+local obstacleIterator = 1;
 
 function ObstacleGenerator:moveObstacles(x,y)
 	ObstacleGenerator.obstacles.x = x;

@@ -6,6 +6,7 @@ module(...,package.seeall);
 function new(owner,gunpointX,gunpointY,targetX,targetY)
 	local bullet = display.newImage( "core/assets/textures/bullet.png" );
 
+	bullet.owner = owner;
 	--bullet.width = 200;
 	--bullet.height = 20;
 	bullet.anchorX = 0.5;
@@ -24,6 +25,8 @@ function new(owner,gunpointX,gunpointY,targetX,targetY)
 	physics.addBody( bullet, "dynamic" );
 	bullet.isSensor = true;
 
+	bullet.name="bullet";
+
 	local bulletVelocity = 1000;
 
 	local velX = dX*(bulletVelocity/hypoten);
@@ -34,9 +37,10 @@ function new(owner,gunpointX,gunpointY,targetX,targetY)
 	bullet:addEventListener( "collision", function(event) 
 		if(event.phase=="began") then
 			print("bullet collision with "..event.other.name);
-			if(event.other.name=="enemy") then
+			if(bullet.owner=="saboteur" and event.other.name=="enemy") then
 				bullet:removeSelf( );
 				bullet = nil;
+				--event.other:takeDamage(Globals.saboteurDamage);
 			end
 		end
 	end );
