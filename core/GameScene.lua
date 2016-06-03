@@ -48,9 +48,13 @@ function scene:create( event )
     --init physics
     physics.start(true );
     physics.setGravity( 0, 0 );
-    --physics.setDrawMode( "hybrid" );
+    physics.setDrawMode( "hybrid" );
 
     militaryGroup:initPhysics(physics);
+
+    local target = display.newCircle( 100, 100, 50 );
+    physics.addBody( target, "dynamic" );
+    target.name="target";
 
     display.currentStage:addEventListener( "touch", touchListener);
 end

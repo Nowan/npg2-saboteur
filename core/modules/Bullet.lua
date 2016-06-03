@@ -31,6 +31,24 @@ function new(owner,gunpointX,gunpointY,targetX,targetY)
 
 	bullet:setLinearVelocity( velX, velY );
 
+	bullet:addEventListener( "collision", function(event) 
+		if(event.phase=="began") then
+			print("bullet collision with "..event.other.name);
+			if(event.other.name=="enemy") then
+				bullet:removeSelf( );
+				bullet = nil;
+			end
+		end
+	end );
+
+	--destroy bullet after some time
+	timer.performWithDelay( 2000, function() 
+		if(bullet) then
+			bullet:removeSelf( );
+			bullet = nil;
+		end
+	end, 1 );
+
 	--print(targetX,targetY);
 	return bullet;
 end
