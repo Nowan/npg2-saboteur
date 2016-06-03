@@ -13,6 +13,8 @@ local physics = require("physics");
 local ground;
 local parallax;
 local saboteur;
+local GUI;
+local ObstacleGenerator;
 
 local function touchListener(event)
     if(event.phase=="began") then
@@ -24,6 +26,18 @@ local function touchListener(event)
         saboteur:shoot(event.x,event.y);
     end
 end
+
+--spawn recursively
+local spawnObstacle;
+spawnObstacle = function()
+    ObstacleGenerator:generateObstacle();
+    local nextIteration = math.random( Globals.obstacleSpawning-Globals.obstacleSpawning/3,  Globals.obstacleSpawning+ Globals.obstacleSpawning/3 )
+
+    timer.performWithDelay( nextIteration, function() 
+        spawnObstacle();
+    end, 1 );
+end
+
 
 function scene:create( event )
     local sceneGroup = self.view;
@@ -52,9 +66,14 @@ function scene:create( event )
 
     militaryGroup:initPhysics(physics);
 
-    local target = display.newCircle( 100, 100, 50 );
-    physics.addBody( target, "dynamic" );
-    target.name="target";
+    GUI = require("core.modules.GUI").new();
+
+    ObstacleGenerator = require("core.modules.ObstacleGenerator");
+    --Camera:addToViewport(ObstacleGenerator:generateObstacle())
+
+    timer.performWithDelay( 2000, function() 
+        spawnObstacle();        
+    end, 1 );
 
     display.currentStage:addEventListener( "touch", touchListener);
 end
@@ -108,10 +127,15 @@ end
 local groundPointer = 1;
 
 Runtime:addEventListener( "enterFrame", function() 
-    --Camera:setPosition(Camera.x-Globals.movementSpeed*getDeltaTime(),0);
     local deltaTime = getDeltaTime();
     Globals.playerPosition = Globals.playerPosition + Globals.movementSpeed*deltaTime;
     ground.x = ground.initialX-Globals.playerPosition;
+
+    --Camera:setPosition(Globals.playerPosition,0);
+
+    ObstacleGenerator:moveObstacles(-Globals.playerPosition,0);
+
+    GUI:updateProgress(  );
 
     --print(ground.blocks[1]:localToContent( 0, 0 )<ground.initialX);
     if(ground.blocks[groundPointer]:localToContent( 0, 0 )<ground.initialX) then

@@ -17,19 +17,30 @@ local sequenceData = {
 	{ name="sitting", sheet=sheet1, start=1, count=4, time=450, loopCount=0, loopDirection="bounce" },
 	{ name="standingUp", sheet=sheet2, start=1, count=3, time=450, loopCount=0 },
 	{ name="firing", sheet=sheet3, start=1, count=14, time=1050, loopCount=0 },
-	{ name="reloading", sheet=sheet4, start=2, count=8, time=1050, loopCount=0 }
+	{ name="reloading", sheet=sheet4, start=2, count=7, time=1050, loopCount=0 }
 }
 
 function new()
-	local enemySoldier = {};
+	local enemySoldier = display.newGroup();
 
-	local sprite = display.newSprite( sheet1, sequenceData );
-	sprite.xScale = -2;
-	sprite.yScale = 2;
-	sprite.x = display.contentCenterX;
-	sprite.y = display.contentCenterY;
-	sprite:setSequence( "reloading" );
+	local sprite = display.newSprite( enemySoldier, sheet1, sequenceData );
+	sprite.xScale = -2.5;
+	sprite.yScale = 2.5;
+	sprite:setSequence( "firing" );
 	sprite:play();
-	print("Enemy spawned");
+	sprite:addEventListener( "sprite", function(event) 
+		if(event.phase=="loop") then
+			if(sprite.sequence=="firing") then
+				--sprite:setSequence("reloading");
+				--sprite:play();
+			elseif(sprite.sequence=="reloading") then
+				--sprite:setSequence("firing");
+				--sprite:play();
+			end
+		end
+	end );
+
+	enemySoldier.sprite = sprite;
+	
 	return enemySoldier;
 end
